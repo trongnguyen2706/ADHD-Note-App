@@ -4,10 +4,23 @@ import { markTextMatch, type ParsedSearch } from "../features/search/search";
 
 type DayDetailPanelProps = {
   group: DayGroup | null;
+  isLoading: boolean;
   search: ParsedSearch;
 };
 
-export function DayDetailPanel({ group, search }: DayDetailPanelProps) {
+export function DayDetailPanel({ group, isLoading, search }: DayDetailPanelProps) {
+  if (isLoading) {
+    return (
+      <aside className="detail-panel">
+        <div className="detail-empty">
+          <CalendarDays size={28} aria-hidden="true" />
+          <h2>Loading timeline</h2>
+          <p>Your latest entries are on the way.</p>
+        </div>
+      </aside>
+    );
+  }
+
   if (!group) {
     return (
       <aside className="detail-panel">
@@ -33,7 +46,10 @@ export function DayDetailPanel({ group, search }: DayDetailPanelProps) {
             <time>{entry.timeText}</time>
             <p>
               {markTextMatch(entry.text, search).map((part, index) => (
-                <span className={part.isMatch ? "text-highlight" : undefined} key={`${entry.id}-${index}`}>
+                <span
+                  className={part.isMatch ? "text-highlight" : undefined}
+                  key={`${entry.id}-${index}`}
+                >
                   {part.text}
                 </span>
               ))}

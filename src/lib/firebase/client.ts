@@ -29,6 +29,7 @@ export const firebaseApp: FirebaseApp | null = hasFirebaseConfig
 export const auth: Auth | null = firebaseApp ? getAuth(firebaseApp) : null;
 
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
 export const db: Firestore | null = firebaseApp
   ? initializeFirestore(firebaseApp, {

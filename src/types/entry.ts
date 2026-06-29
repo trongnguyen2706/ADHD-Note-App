@@ -1,5 +1,3 @@
-import type { Timestamp } from "firebase/firestore";
-
 export type TimeEntry = {
   id: string;
   userId: string;
@@ -10,9 +8,9 @@ export type TimeEntry = {
   textNormalized: string;
   capturedAt: string;
   timezone: string;
-  createdAt: Timestamp | null;
-  updatedAt: Timestamp | null;
-  deletedAt: Timestamp | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  deletedAt: Date | null;
 };
 
 export type DayGroup = {
@@ -27,6 +25,13 @@ export type DayGroup = {
 
 export type AddEntryInput = {
   userId: string;
+  text: string;
+  capturedAt?: Date;
+};
+
+export type UpdateEntryInput = {
+  userId: string;
+  entryId: string;
   text: string;
   capturedAt?: Date;
 };
