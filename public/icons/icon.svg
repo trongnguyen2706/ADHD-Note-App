@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Note Time</title>
+  <rect width="512" height="512" rx="112" fill="#f8fbff" />
+  <rect x="94" y="86" width="324" height="340" rx="52" fill="#ffffff" stroke="#d8e7f7" stroke-width="18" />
+  <path d="M152 178h208M152 252h136M152 326h172" fill="none" stroke="#171923" stroke-width="24" stroke-linecap="round" />
+  <circle cx="358" cy="342" r="48" fill="#8fc7ff" />
+  <path d="M358 316v30l22 15" fill="none" stroke="#171923" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
