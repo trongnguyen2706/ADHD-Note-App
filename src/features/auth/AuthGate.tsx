@@ -41,7 +41,7 @@ export function AuthGate({ session, children }: AuthGateProps) {
             disabled={session.isBusy}
           >
             <LogIn size={18} aria-hidden="true" />
-            <span>{session.isBusy ? "Redirecting..." : "Continue with Google"}</span>
+            <span>{session.isBusy ? "Signing in..." : "Continue with Google"}</span>
           </button>
         </section>
       </main>

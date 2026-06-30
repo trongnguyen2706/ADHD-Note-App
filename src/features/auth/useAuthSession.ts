@@ -1,6 +1,8 @@
 import { startTransition, useEffect, useState } from "react";
 import {
+  getRedirectResult,
   onAuthStateChanged,
+  signInWithPopup,
   signInWithRedirect,
   signOut,
   type User
@@ -40,6 +42,15 @@ function mapUser(user: User): AppViewer {
   };
 }
 
+function isRedirectFallbackError(code: string) {
+  return (
+    code === "auth/popup-blocked" ||
+    code === "auth/popup-closed-by-user" ||
+    code === "auth/cancelled-popup-request" ||
+    code === "auth/operation-not-supported-in-this-environment"
+  );
+}
+
 export function useAuthSession(): AuthSession {
   const [viewer, setViewer] = useState<AppViewer | null>(
     hasFirebaseConfig ? null : demoViewer
@@ -52,6 +63,16 @@ export function useAuthSession(): AuthSession {
     if (!hasFirebaseConfig || !auth) {
       return;
     }
+
+    void getRedirectResult(auth).catch((nextError: unknown) => {
+      const message =
+        nextError instanceof Error ? nextError.message : "Unable to sign in right now.";
+
+      startTransition(() => {
+        setError(message);
+        setIsBusy(false);
+      });
+    });
 
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       startTransition(() => {
@@ -73,8 +94,24 @@ export function useAuthSession(): AuthSession {
     setIsBusy(true);
 
     try {
-      await signInWithRedirect(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+
+      startTransition(() => {
+        setViewer(mapUser(result.user));
+        setIsLoading(false);
+        setIsBusy(false);
+      });
     } catch (nextError) {
+      if (
+        nextError instanceof Error &&
+        "code" in nextError &&
+        typeof nextError.code === "string" &&
+        isRedirectFallbackError(nextError.code)
+      ) {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
+
       const message =
         nextError instanceof Error ? nextError.message : "Unable to sign in right now.";
       setError(message);
