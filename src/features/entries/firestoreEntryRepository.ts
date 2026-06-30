@@ -10,31 +10,74 @@ import {
   updateDoc,
   type DocumentData
 } from "firebase/firestore";
+import { format } from "date-fns";
 import { db } from "../../lib/firebase/client";
 import { normalizeText } from "../../lib/text/normalizeText";
 import { toEntryTimeParts } from "../../lib/time/currentEntryTime";
 import type { AddEntryInput, TimeEntry, UpdateEntryInput } from "../../types/entry";
 import type { EntryRepository } from "./repository";
 
+type TimestampLike = {
+  toDate: () => Date;
+};
+
+function isValidDate(value: Date) {
+  return Number.isFinite(value.getTime());
+}
+
 function toDate(value: unknown) {
   if (value && typeof value === "object" && "toDate" in value) {
-    const toDateMethod = (value as { toDate: () => Date }).toDate;
-    return typeof toDateMethod === "function" ? toDateMethod() : null;
+    const timestampLike = value as TimestampLike;
+    const nextDate = timestampLike.toDate();
+    return isValidDate(nextDate) ? nextDate : null;
+  }
+
+  if (value instanceof Date) {
+    return isValidDate(value) ? value : null;
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    const nextDate = new Date(value);
+    return isValidDate(nextDate) ? nextDate : null;
   }
 
   return null;
 }
 
 function mapFirestoreEntry(entryId: string, data: DocumentData): TimeEntry {
+  const capturedAtDate = toDate(data.capturedAt);
+  const capturedAt =
+    typeof data.capturedAt === "string"
+      ? data.capturedAt
+      : capturedAtDate?.toISOString() ?? "";
+  const dateKey =
+    typeof data.dateKey === "string"
+      ? data.dateKey
+      : capturedAtDate
+        ? format(capturedAtDate, "yyyy-MM-dd")
+        : "";
+  const monthKey =
+    typeof data.monthKey === "string"
+      ? data.monthKey
+      : capturedAtDate
+        ? format(capturedAtDate, "yyyy-MM")
+        : dateKey.slice(0, 7);
+  const timeText =
+    typeof data.timeText === "string"
+      ? data.timeText
+      : capturedAtDate
+        ? format(capturedAtDate, "HH:mm")
+        : "";
+
   return {
     id: entryId,
     userId: typeof data.userId === "string" ? data.userId : "",
-    dateKey: typeof data.dateKey === "string" ? data.dateKey : "",
-    monthKey: typeof data.monthKey === "string" ? data.monthKey : "",
-    timeText: typeof data.timeText === "string" ? data.timeText : "",
+    dateKey,
+    monthKey,
+    timeText,
     text: typeof data.text === "string" ? data.text : "",
     textNormalized: typeof data.textNormalized === "string" ? data.textNormalized : "",
-    capturedAt: typeof data.capturedAt === "string" ? data.capturedAt : "",
+    capturedAt,
     timezone: typeof data.timezone === "string" ? data.timezone : "",
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),

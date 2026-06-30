@@ -1,4 +1,4 @@
-import { format, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { entryMatchesSearch, type ParsedSearch } from "../search/search";
 import type { DayGroup, TimeEntry } from "../../types/entry";
 
@@ -21,11 +21,14 @@ export function groupEntriesByDay(entries: TimeEntry[], search: ParsedSearch): D
         b.capturedAt.localeCompare(a.capturedAt)
       );
       const date = parseISO(dateKey);
+      const safeDate = isValid(date) ? date : new Date(`${dateKey}T00:00:00`);
+      const displayDate = isValid(safeDate) ? format(safeDate, "dd/MM") : dateKey;
+      const fullDate = isValid(safeDate) ? format(safeDate, "d MMMM yyyy") : dateKey;
 
       return {
         dateKey,
-        displayDate: format(date, "dd/MM"),
-        fullDate: format(date, "d MMMM yyyy"),
+        displayDate,
+        fullDate,
         entries: sortedEntries,
         entryCount: sortedEntries.length,
         previewEntries: sortedEntries.slice(0, 3),
