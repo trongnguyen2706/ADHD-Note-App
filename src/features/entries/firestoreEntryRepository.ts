@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -65,9 +66,12 @@ export const firestoreEntryRepository: EntryRepository | null = db
           orderBy("capturedAt", "desc")
         );
 
-        return onSnapshot(
+        let hasReceivedSnapshot = false;
+
+        const unsubscribe = onSnapshot(
           entriesQuery,
           (snapshot) => {
+            hasReceivedSnapshot = true;
             const nextEntries = snapshot.docs
               .map((entryDoc) => mapFirestoreEntry(entryDoc.id, entryDoc.data()))
               .filter((entry) => !entry.deletedAt);
@@ -78,6 +82,32 @@ export const firestoreEntryRepository: EntryRepository | null = db
             onError?.(error);
           }
         );
+
+        void getDocs(entriesQuery)
+          .then((snapshot) => {
+            if (hasReceivedSnapshot) {
+              return;
+            }
+
+            const nextEntries = snapshot.docs
+              .map((entryDoc) => mapFirestoreEntry(entryDoc.id, entryDoc.data()))
+              .filter((entry) => !entry.deletedAt);
+
+            onEntries(nextEntries);
+          })
+          .catch((error: unknown) => {
+            if (hasReceivedSnapshot) {
+              return;
+            }
+
+            onError?.(
+              error instanceof Error
+                ? error
+                : new Error("Unable to load your timeline entries.")
+            );
+          });
+
+        return unsubscribe;
       },
       async addEntry(input: AddEntryInput) {
         const parts = toEntryTimeParts(input.capturedAt ?? new Date());
