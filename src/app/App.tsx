@@ -20,7 +20,7 @@ export function App() {
   const isOnline = useOnlineStatus();
   const [searchValue, setSearchValue] = useState("");
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
-  const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [isComposerOpen, setIsComposerOpen] = useState(true);
   const [isSavingEntry, setIsSavingEntry] = useState(false);
   const [entryState, setEntryState] = useState<{
     entries: TimeEntry[];
@@ -131,7 +131,6 @@ export function App() {
             <main className="app-shell">
               <TopBar
                 isDemo={viewer.isDemo}
-                onCreateEntry={() => setIsComposerOpen(true)}
                 onSignOut={session.signOut}
                 searchValue={searchValue}
                 statusLabel={statusLabel}

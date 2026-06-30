@@ -1,10 +1,9 @@
-import { CirclePlus, LogOut, Search } from "lucide-react";
+import { LogOut, Search } from "lucide-react";
 import { InstallAppPrompt } from "../features/pwa/InstallAppPrompt";
 import { SyncStatus } from "./SyncStatus";
 
 type TopBarProps = {
   isDemo: boolean;
-  onCreateEntry: () => void;
   onSignOut: () => Promise<void>;
   searchValue: string;
   statusLabel: string;
@@ -15,7 +14,6 @@ type TopBarProps = {
 
 export function TopBar({
   isDemo,
-  onCreateEntry,
   onSignOut,
   searchValue,
   statusLabel,
@@ -45,14 +43,6 @@ export function TopBar({
 
       <div className="top-bar-actions">
         <SyncStatus label={statusLabel} tone={statusTone} />
-        <button
-          className="secondary-button compact-button"
-          type="button"
-          onClick={onCreateEntry}
-        >
-          <CirclePlus size={18} aria-hidden="true" />
-          <span>New note</span>
-        </button>
         <span className="viewer-pill">{viewerLabel}</span>
         <InstallAppPrompt />
         {!isDemo && (
