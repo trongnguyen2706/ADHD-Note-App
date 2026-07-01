@@ -7,6 +7,11 @@ type AddEntryModalProps = {
   error: string | null;
   onClose: () => void;
   onSave: (text: string) => Promise<boolean>;
+  eyebrow?: string;
+  title?: string;
+  placeholder?: string;
+  submitLabel?: string;
+  initialValue?: string;
 };
 
 export function AddEntryModal({
@@ -14,9 +19,18 @@ export function AddEntryModal({
   isSaving,
   error,
   onClose,
-  onSave
+  onSave,
+  eyebrow = "Quick capture",
+  title = "Add a note for right now",
+  placeholder = "What are you doing right now?",
+  submitLabel = "Save entry",
+  initialValue = ""
 }: AddEntryModalProps) {
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialValue);
+
+  useEffect(() => {
+    setDraft(initialValue);
+  }, [initialValue]);
 
   useEffect(() => {
     function handleEscape(event: KeyboardEvent) {
@@ -69,8 +83,8 @@ export function AddEntryModal({
       >
         <div className="modal-header">
           <div>
-            <p className="eyebrow">Quick capture</p>
-            <h2 id="add-entry-title">Add a note for right now</h2>
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 id="add-entry-title">{title}</h2>
           </div>
           <button
             className="icon-button"
@@ -92,7 +106,7 @@ export function AddEntryModal({
           <span className="sr-only">What are you doing right now?</span>
           <textarea
             value={draft}
-            placeholder="What are you doing right now?"
+            placeholder={placeholder}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
               if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
@@ -125,7 +139,7 @@ export function AddEntryModal({
             onClick={() => void handleSubmit()}
             disabled={isSaving || !draft.trim()}
           >
-            {isSaving ? "Saving..." : "Save entry"}
+            {isSaving ? "Saving..." : submitLabel}
           </button>
         </div>
       </section>

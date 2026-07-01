@@ -75,7 +75,7 @@ button {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1380px, calc(100% - 2rem));
   margin: 1rem auto 0;
   padding: 0.75rem 0.95rem;
   border: 1px solid rgba(180, 83, 9, 0.16);
@@ -119,7 +119,7 @@ button {
 
 .app-shell {
   position: relative;
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1380px, calc(100% - 2rem));
   min-height: 100vh;
   margin: 0 auto;
   padding: 1.25rem 0 6rem;
@@ -220,7 +220,8 @@ h2 {
 .icon-button,
 .floating-add,
 .primary-button,
-.secondary-button {
+.secondary-button,
+.quick-add-button {
   display: inline-grid;
   place-items: center;
   border: 1px solid var(--border);
@@ -243,13 +244,15 @@ h2 {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.quick-add-button {
   gap: 0.55rem;
   min-height: 3rem;
   padding: 0.75rem 1rem;
 }
 
-.primary-button {
+.primary-button,
+.quick-add-button {
   border-color: rgba(217, 119, 6, 0.24);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 233, 205, 0.82)),
@@ -305,9 +308,136 @@ h2 {
 
 .content-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(19rem, 24rem);
+  grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr) minmax(19rem, 24rem);
   gap: 1.2rem;
   align-items: start;
+}
+
+.quick-notes-panel {
+  position: sticky;
+  top: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 32%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.58), rgba(255, 248, 238, 0.4));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(calc(var(--blur) + 2px));
+}
+
+.quick-notes-hero {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.quick-notes-copy {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.quick-notes-date {
+  margin-bottom: 0.5rem;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.quick-notes-meta {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.quick-notes-list {
+  display: grid;
+  gap: 0.75rem;
+  max-height: 28rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.quick-note-card,
+.quick-note-empty {
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.quick-note-card[data-pinned="true"] {
+  border-color: rgba(217, 119, 6, 0.24);
+  background:
+    linear-gradient(145deg, rgba(255, 247, 237, 0.78), rgba(255, 251, 241, 0.48));
+}
+
+.quick-note-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.quick-note-actions,
+.timeline-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.quick-note-action,
+.timeline-entry-action {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(120, 113, 108, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.quick-note-action:hover,
+.quick-note-action:focus-visible,
+.timeline-entry-action:hover,
+.timeline-entry-action:focus-visible {
+  border-color: rgba(217, 119, 6, 0.24);
+  color: var(--accent-strong);
+  background: rgba(255, 247, 237, 0.82);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.quick-note-time {
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.quick-note-card p,
+.quick-note-empty p {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+
+.quick-note-empty {
+  display: grid;
+  gap: 0.65rem;
+  color: var(--muted);
+  place-items: start;
 }
 
 .day-grid {
@@ -445,6 +575,15 @@ h2 {
   margin-bottom: 0;
 }
 
+.timeline-entry-content {
+  min-width: 0;
+}
+
+.timeline-entry-actions {
+  justify-content: flex-end;
+  margin-bottom: 0.45rem;
+}
+
 .text-highlight {
   border-radius: 6px;
   background: var(--highlight);
@@ -457,7 +596,7 @@ h2 {
 
 .floating-add {
   position: fixed;
-  right: max(1rem, calc((100vw - 1180px) / 2));
+  right: max(1rem, calc((100vw - 1380px) / 2));
   bottom: 1.4rem;
   width: 4rem;
   height: 4rem;
@@ -572,6 +711,7 @@ h2 {
 .icon-button:focus-visible,
 .primary-button:hover,
 .secondary-button:hover,
+.quick-add-button:hover,
 .floating-add:hover,
 .floating-add:focus-visible {
   transform: translateY(-1px);
@@ -586,6 +726,17 @@ h2 {
 
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1100px) {
+  .content-layout {
+    grid-template-columns: minmax(15rem, 18rem) 1fr;
+  }
+
+  .detail-panel {
+    grid-column: 1 / -1;
+    position: static;
   }
 }
 
@@ -609,6 +760,7 @@ h2 {
     grid-template-columns: 1fr;
   }
 
+  .quick-notes-panel,
   .detail-panel {
     position: static;
   }
@@ -616,7 +768,7 @@ h2 {
 
 @media (max-width: 560px) {
   .app-shell {
-    width: min(100% - 1rem, 1180px);
+    width: min(100% - 1rem, 1380px);
     padding-top: 0.5rem;
   }
 
@@ -647,7 +799,8 @@ h2 {
   }
 
   .primary-button,
-  .secondary-button {
+  .secondary-button,
+  .quick-add-button {
     width: 100%;
   }
 
